@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+httpx
+pydantic
+python-dotenv      # if you're using .env for configs or tokens
+apify-client       # if you're using Apify API
+textblob
