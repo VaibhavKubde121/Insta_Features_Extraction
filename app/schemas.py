@@ -2,11 +2,10 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 
-class ProfileListRequest(BaseModel):
-    signature: str
-    profile_urls: List[str]
-
-class FeatureResponse(BaseModel):
+# Schema for a single profile's features (with username and platform_ref included)
+class FeatureRequest(BaseModel):
+    username: str
+    platform_ref: str
     username_length: int
     num_digits_in_username: int
     profile_has_picture: int
@@ -23,24 +22,35 @@ class FeatureResponse(BaseModel):
     joined_recently: int
     is_verified: int
 
-class ProfileRequest(FeatureResponse):
-    pass
 
+# Request schema for bulk prediction
 class BulkProfilesRequest(BaseModel):
-    profiles: List[ProfileRequest]
+    profiles: List[FeatureRequest]
 
-class PredictionResponseItem(BaseModel):
-    profile_ref: str
-    prediction: str
 
-class PredictionResponse(BaseModel):
-    status: str
+# Response schema for each prediction result
+class PredictionResult(BaseModel):
+    username: str
+    prediction: str  # "Fake" or "Legit"
+
+
+# Success Response Schema
+class SuccessResponse(BaseModel):
+    status: str = "success"
     code: int
     message: str
-    data: List[PredictionResponseItem]
+    data: List[PredictionResult]
 
 
+# Error Response Schema
 class ErrorResponse(BaseModel):
+    status: str = "error"
     code: int
     message: str
     details: Optional[str] = None
+
+
+# Request schema to handle the incoming list of Instagram URLs and signature
+class ProfileListRequest(BaseModel):
+    signature: str
+    profile_urls: List[str]

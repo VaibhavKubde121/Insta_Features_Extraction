@@ -1,11 +1,11 @@
-# extractor.py
 from apify_client import ApifyClient
 import logging
 from fastapi import HTTPException
-from app.config import APIFY_API_TOKEN, SPAM_WORDS, SUSPICIOUS_WORDS
+from app.config import APIFY_API_TOKEN, SPAM_WORDS, SUSPICIOUS_WORDS, PLATFORM_REF_INSTAGRAM
 from app.errors import ERRORS
 from app.exceptions import GenericInternalException
-from app.utils import *
+from app.utils import extract_username_from_url, count_digits, count_word_occurrences, \
+    sentiment_score  # Import the utility function
 
 logging.basicConfig(level=logging.INFO)
 
@@ -13,7 +13,6 @@ async def extract_features_from_instagram(profile_urls: list) -> list:
     """
     Extract features for a list of Instagram profile URLs by running the Apify actor via SDK.
     """
-
     try:
         # Initialize the Apify client
         client = ApifyClient(APIFY_API_TOKEN)
@@ -41,19 +40,24 @@ async def extract_features_from_instagram(profile_urls: list) -> list:
             details="Failed during profile extraction."
         )
 
-
-
+    # List to store the features of each profile
     features_list = []
+
+    # Loop through each profile's data and extract relevant features
     for profile_data in scraped_data:
+        username = profile_data.get("username","")  # Extract username from URL
         bio = profile_data.get("biography", "")
         followers = profile_data.get("followersCount", 0)
         follows = profile_data.get("followsCount", 1)
         posts = profile_data.get("postsCount", 0)
         highlight_reels = profile_data.get("highlightReelCount", 0)
 
+        # Create the features dictionary
         features = {
-            "username_length": len(profile_data.get("username", "")),
-            "num_digits_in_username": count_digits(profile_data.get("username", "")),
+            "username": username,  # Extracted username from URL
+            "platform_ref": PLATFORM_REF_INSTAGRAM,  # We can set the platform_ref to Instagram directly
+            "username_length": len(username),
+            "num_digits_in_username": count_digits(username),
             "profile_has_picture": int(bool(profile_data.get("profilePicUrlHD"))),
             "profile_has_bio": int(bool(bio.strip())),
             "bio_word_count": len(bio.split()),
@@ -69,7 +73,8 @@ async def extract_features_from_instagram(profile_urls: list) -> list:
             "is_verified": int(profile_data.get("verified", False)),
         }
 
+        # Add the features dictionary to the list
         features_list.append(features)
 
-    print("Feature List" , features_list)
+    logging.info("Feature List: %s", features_list)
     return features_list

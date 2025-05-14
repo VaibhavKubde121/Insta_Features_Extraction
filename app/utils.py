@@ -21,3 +21,15 @@ def extract_urls(text: str) -> int:
 
 def extract_external_urls(text: str) -> int:
     return len(re.findall(r"(?i)\b(?:https?|ftp):\/\/[^\s/$.?#].[^\s]*\b", text))
+
+
+# utils.py
+
+def extract_username_from_url(profile_url: str) -> str:
+    """Extracts the username from an Instagram profile URL."""
+    if profile_url.startswith("https://www.instagram.com/"):
+        # Split the URL by '/' and get the second-to-last element (which is the username)
+        username = profile_url.split("/")[-2]
+        return username
+    else:
+        return "unknown_user"  # Return a default value if the URL format is incorrect

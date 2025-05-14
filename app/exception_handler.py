@@ -29,4 +29,3 @@ async def generic_internal_exception_handler(request: Request, exc: GenericInter
             "details": exc.detail.get("details", None)
         }
     )
-

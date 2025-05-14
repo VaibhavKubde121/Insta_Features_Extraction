@@ -20,5 +20,6 @@ PREDICTION_SERVICE_URL = "http://127.0.0.1:8000"
 API_SECRET_KEY = "B7@dX#9Kq$1m^tFW!ZgL&pY82uERvj5A*hM0Nc!xoQz4UVSfb6TLkwC#iD3n%JM"
 
 
+PLATFORM_REF_INSTAGRAM="instagram"
 
 # uvicorn main:app --reload --port 8001

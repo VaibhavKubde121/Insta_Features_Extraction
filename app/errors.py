@@ -1,5 +1,7 @@
 # app/errors.py
 
+# app/errors.py
+
 ERRORS = {
     "INVALID_URL": {
         "code": 1001,
